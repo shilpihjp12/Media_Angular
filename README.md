@@ -6,7 +6,7 @@
 
 2. Clone this repository into your local machine using the terminal (mac) or Gitbash (PC) 
 
-    `git clone https://github.com/shilpihjp12/Media_frontEnd.git`
+    `git clone https://github.com/shilpihjp12/Media_Angular.git`
     
 3. CD to the folder
 
