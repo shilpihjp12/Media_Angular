@@ -1,16 +1,17 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormControl, Validator, Validators,FormBuilder } from "@angular/forms"
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from "@angular/forms"
 import { Router } from "@angular/router";
-import { MediaItemService } from 'src/service/media-item.service';
+import { MediaItemService } from '../../service/media-item.service';
  
 @Component({
+    standalone: false,
     selector: "media-form",
     templateUrl: "./media-item-form.component.html",
     styleUrls: ["media-item-form.component.css"]
 })
 
 export class MediaItemFormComponent implements OnInit {
-    form:FormGroup;
+    form!: FormGroup;
 
     constructor(private formBuilder: FormBuilder, private service: MediaItemService, private router: Router) {
         
@@ -39,25 +40,27 @@ export class MediaItemFormComponent implements OnInit {
         // });
     }
 
-    yearValidator(control:FormControl) {
-        if(control.value.trim().length === 0) {
+    yearValidator(control: AbstractControl): ValidationErrors | null {
+        const value = String(control.value ?? '').trim();
+        if(value.length === 0) {
             return null;
         }
-        let year = parseInt(control.value, 10);
+        const year = parseInt(value, 10);
         if(year >= 1900 && year <= 2100 ) {
             return null;
         } else {
             return {year : true};
         }
     }
-    onSubmit(mediaItem){
-        this.service.add(mediaItem).subscribe(
-            (data) => {
-              console.log(data);
-              this.router.navigate(['/', mediaItem.medium]);
+    onSubmit(mediaItem: any) {
+        this.service.add(mediaItem).subscribe({
+            next: (data) => {
+                console.log(data);
+                this.router.navigate(['/', mediaItem.medium]);
+            },
+            error: (error: unknown) => {
+                console.error(error);
             }
-        ), error => {
-            console.log(error);
-        };
+        });
     }
 }

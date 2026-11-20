@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MediaItemService } from 'src/service/media-item.service';
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls : ['./app.component.css']
@@ -53,16 +53,6 @@ export class AppComponent  implements OnInit{
     //     }
     //   ];
 
-    constructor(private serviceItem : MediaItemService) {
-
-    }
-    
     ngOnInit() {
-        // this.serviceItem.get().subscribe(
-        //   (data) => {
-        //     console.log(data);
-        //     this.firstMediaItem = data;
-        //   }
-        // );;
     }
 }

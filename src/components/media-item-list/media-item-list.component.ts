@@ -1,47 +1,51 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { MediaItemService } from 'src/service/media-item.service';
+import { MediaItemService } from '../../service/media-item.service';
 
 
 @Component({
+    standalone: false,
     selector: "media-item-list",
     templateUrl: './media-item-list.component.html',
     styleUrls: ['./media-item-list.component.css']
 })
 export class MediaItemListComponent implements OnInit{
     medium = '';
-    mediaItems;
+    mediaItems: any[] = [];
 
     constructor(private service: MediaItemService, private activatedroute: ActivatedRoute) {}
 
     ngOnInit() {
-        this.activatedroute.paramMap.subscribe( param =>{
-            let medium = param.get('medium');
+        this.activatedroute.paramMap.subscribe(param => {
+            const medium = param.get('medium') ?? '';
             if(medium.toLowerCase() === 'all') {
-                medium = '';
+                this.getMediaItem('');
+            } else {
+                this.getMediaItem(medium);
             }
-             this.getMediaItem(medium);
         })
        
     }
-    getMediaItem(medium) {
-        this.service.get(medium).subscribe(
-            (data) => {
-            console.log(data);
-            this.mediaItems = data;
+    getMediaItem(medium: string) {
+        this.service.get(medium).subscribe({
+            next: (data) => {
+                console.log(data);
+                this.mediaItems = data;
+            },
+            error: (error: unknown) => {
+                console.error(error);
             }
-        ), error => {
-            console.log(error);
-        };
+        });
     }
-    onMediaItemDelete(mediaItem) {
-        this.service.delete(mediaItem).subscribe(
-            (data) => {
-              console.log(data);
-              this.mediaItems = data;
+    onMediaItemDelete(mediaItem: any) {
+        this.service.delete(mediaItem).subscribe({
+            next: (data) => {
+                console.log(data);
+                this.mediaItems = data;
+            },
+            error: (error: unknown) => {
+                console.error(error);
             }
-        ), error => {
-            console.log(error);
-        };
+        });
      }
 }

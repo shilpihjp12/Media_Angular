@@ -55,7 +55,7 @@ export class MediaItemService {
     constructor(private httpClient: HttpClient) {
 
     }
-    get(medium : String) : Observable<any>{
+    get(medium: string): Observable<any> {
       if(medium) {
         return this.httpClient.get(`http://localhost:9091/media/getmediaByMedium?medium=${medium}`);
       } else {

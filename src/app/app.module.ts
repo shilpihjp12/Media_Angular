@@ -7,7 +7,6 @@ import { MediaItemComponent } from '../components/media-item/mediaItem.component
 import { MediaItemListComponent } from '../components/media-item-list/media-item-list.component';
 import { FavoriteDirective } from '../directive/favorite.directive';
 import { CategoryListPipe } from '../pipes/category-list.pipe';
-import { MediaItemService } from 'src/service/media-item.service';
 //import {MediaItemFormModule  } from '../components/media-item-form/media-item-form.module';
 import { routing } from './app.route';
 
