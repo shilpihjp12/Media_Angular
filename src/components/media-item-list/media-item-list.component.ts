@@ -27,21 +27,21 @@ export class MediaItemListComponent implements OnInit{
        
     }
     getMediaItem(medium: string) {
+        this.mediaItems = [];
         this.service.get(medium).subscribe({
             next: (data) => {
-                console.log(data);
-                this.mediaItems = data;
+                this.mediaItems = Array.isArray(data) ? data : [];
             },
             error: (error: unknown) => {
                 console.error(error);
+                this.mediaItems = [];
             }
         });
     }
     onMediaItemDelete(mediaItem: any) {
         this.service.delete(mediaItem).subscribe({
             next: (data) => {
-                console.log(data);
-                this.mediaItems = data;
+                this.mediaItems = Array.isArray(data) ? data : [];
             },
             error: (error: unknown) => {
                 console.error(error);

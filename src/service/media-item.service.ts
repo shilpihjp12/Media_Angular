@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -55,14 +56,15 @@ export class MediaItemService {
     constructor(private httpClient: HttpClient) {
 
     }
-    get(medium: string): Observable<any> {
-      if(medium) {
-        return this.httpClient.get(`http://localhost:9091/media/getmediaByMedium?medium=${medium}`);
-      } else {
-        return this.httpClient.get("http://localhost:9091/media/getmedia");
-      }
-       
-        //return this.mediaItems;
+    get(medium: string): Observable<any[]> {
+      const request$ = medium
+        ? this.httpClient.get<any[]>(`http://localhost:9091/media/getmediaByMedium?medium=${encodeURIComponent(medium)}`)
+        : this.httpClient.get<any[]>("http://localhost:9091/media/getmedia");
+
+      return request$.pipe(
+        map(data => Array.isArray(data) ? data : []),
+        catchError(error => this.handleMissingResponse(error))
+      );
     }
 
     add(mediaItem : any) : Observable<any> {
@@ -74,8 +76,13 @@ export class MediaItemService {
       return this.httpClient.post("http://localhost:9091/media/savemedia",mediaItem,httpOptions)
     }
 
-    delete(mediaItem: any) : Observable<any> {
-      return this.httpClient.delete(`http://localhost:9091/media/deletemediabyid?id=${mediaItem.id}`);
+    delete(mediaItem: any) : Observable<any[]> {
+      return this.httpClient.delete<any[] | null>(
+        `http://localhost:9091/media/deletemediabyid?id=${encodeURIComponent(mediaItem.id)}`
+      ).pipe(
+        map(data => Array.isArray(data) ? data : []),
+        catchError(error => this.handleMissingResponse(error))
+      );
     }
 
     getCategory()  : Observable<any> {
@@ -84,5 +91,12 @@ export class MediaItemService {
 
     getMedium()  : Observable<any> {
       return this.httpClient.get('http://localhost:9091/media/getMedium')
+    }
+
+    private handleMissingResponse(error: HttpErrorResponse): Observable<any[]> {
+      if(error.status === 404 || error.status === 204) {
+        return of([]);
+      }
+      return throwError(() => error);
     }
 }
